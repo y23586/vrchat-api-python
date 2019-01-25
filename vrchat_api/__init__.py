@@ -79,7 +79,7 @@ class VRChatAPI():
         )
         self.token = ret["auth"]
 
-    def getFriends(self, offline, favorite):
+    def getFriends(self, offline=False, favorite=False):
         """
         Get a list of friends.
 
