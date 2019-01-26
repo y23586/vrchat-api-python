@@ -5,8 +5,8 @@ from vrchat_api.util import strptime
 
 class JsonObject():
     """
-    A wrapper class for a JSON dictionaly.
-    Each value of the dictionaly is registered as a property of the object.
+    A wrapper class for a JSON dictionally.
+    Each value of the dictionally is registered as a property of the object.
     Registration of some values might be overriden for the purpose of proper type conversions.
     """
 
@@ -16,6 +16,18 @@ class JsonObject():
                 setattr(self, k, v)
 
         self.attributes = set(j.keys())
+
+    def __eq__(self, x):
+        return isinstance(x, JsonObject) and \
+            self.attributes == x.attributes and \
+            all([getattr(self, y) == getattr(x, y) for y in self.attributes])
+
+    def __hash__(self):
+        h = 0
+        for k in sorted(self.attributes):
+            h += hash(k) + hash(getattr(self, k))
+
+        return h
 
 class User(JsonObject):
     def __init__(self, j):
@@ -57,7 +69,12 @@ class Instance(JsonObject):
 
 class UnityPackage(JsonObject):
     def __init__(self, j):
-        setattr(self, "created_at", strptime(j["created_at"]))
+        setattr(
+            self,
+            "created_at",
+            strptime(j["created_at"]) if "created_at" in j.keys() else None
+        )
+
         super().__init__(j)
 
 class WorldLocation():
@@ -69,7 +86,25 @@ class WorldLocation():
         if not self.offline and not self.private:
             self.worldId, self.instanceId = re.compile("([\w-]+):(.+)").match(location).groups()
 
+    def __eq__(self, x):
+        return isinstance(x, WorldLocation) and \
+            all([getattr(self, y) == getattr(x, y) for y in
+                 ["offline", "private", "worldId", "instanceId"]
+            ])
+
+    def __hash__(self):
+        return 0 # FIXME
+
 class InstanceStat():
     def __init__(self, j):
         setattr(self, "id", j[0])
         setattr(self, "users", j[1])
+
+    def __eq__(self, x):
+        return isinstance(x, InstanseStat) and \
+            all([getattr(self, y) == getattr(x, y) for y in
+                 ["id", "users"]
+            ])
+
+    def __hash__(self):
+        return 0 # FIXME
