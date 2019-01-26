@@ -1,9 +1,19 @@
 # vrchat-api-python
 This is an unofficial Python library for the [VRChat API](https://vrchatapi.github.io/#/).
 
-## How to Use
+## How to Install
 So far this library is yet to be published to PyPI.
 Please run `pip3 install -e .` to install the library.
+
+## How to Use
+```python
+from vrchat_api import VRChatAPI
+
+api = VRChatAPI("YOUR_USERNAME", "YOUR_PASSWORD")
+api.authenticate()
+
+friends = api.getFriends() # A list of your friends!
+```
 
 See [`examples/`](examples/) for more details.
 
